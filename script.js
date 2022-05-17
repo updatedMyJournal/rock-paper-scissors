@@ -13,24 +13,59 @@ function computerPlay() {
   }
 }
 
-function playRound(playerSelection, computerSelection) {
+function playerPlay() {
+  let playerInput;
+
+  while (true) {
+    playerInput = prompt('Rock, Paper or Scissors?');
+
+    if (playerInput == null) break;
+
+    if (playerInput.match(/^(rock|paper|scissors)$/i)) break;
+  }
+  
+  return playerInput;
+}
+
+function playRound() {
+  let playerSelection = playerPlay();
+  let computerLc = computerPlay().toLowerCase();
+
+  if (playerSelection == null) {
+    return (
+      { 
+        message: 'You cancelled your input.',
+        playerWonTheGame: false,
+        draw: true,
+      }
+    );
+  }
+
   let playerLc = playerSelection.toLowerCase();
-  let computerLc = computerSelection.toLowerCase();
   let winMessage = `You win! ${playerLc[0].toUpperCase() + playerLc.slice(1)} beats ${computerLc[0].toUpperCase() + computerLc.slice(1)}`;
   let loseMessage = `You lose! ${computerLc[0].toUpperCase() + computerLc.slice(1)} beats ${playerLc[0].toUpperCase() + playerLc.slice(1)}`;
   let drawMessage = `It's a draw! ${playerLc[0].toUpperCase() + playerLc.slice(1)} and ${computerLc[0].toUpperCase() + computerLc.slice(1)} are equal!`;
 
   if (playerLc === computerLc) {
-    return drawMessage;
-  } 
+    return (
+      { 
+        message: drawMessage,
+        playerWonTheGame: false,
+        draw: true,
+      }
+    );
+  }
   
   if (
     (playerLc === 'rock' && computerLc === 'scissors')
     || (playerLc === 'paper' && computerLc === 'rock')
     || (playerLc === 'scissors' && computerLc === 'paper')
   ) {
-    return winMessage;
+    return { message: winMessage, playerWonTheGame: true, };
   } 
 
-  return loseMessage;
+  return { message: loseMessage, playerWonTheGame: false, };
 }
+
+}
+
