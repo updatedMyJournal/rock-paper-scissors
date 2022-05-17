@@ -67,5 +67,31 @@ function playRound() {
   return { message: loseMessage, playerWonTheGame: false, };
 }
 
+function game() {
+  let playerCounter = 0;
+  let computerCounter = 0;
+
+  for (let i = 0; i < 5; i++) {
+    let { message, playerWonTheGame, draw = false } = playRound();
+
+    if (!draw) {
+      if (playerWonTheGame) {
+        playerCounter++;
+      } else {
+        computerCounter++;
+      }
+    }
+
+    console.log(`${message} Player: ${playerCounter} Computer: ${computerCounter}`);
+  }
+
+  if (playerCounter > computerCounter) {
+    console.log(`You win! Player: ${playerCounter} Computer: ${computerCounter}`)
+  } else if (computerCounter > playerCounter) {
+    console.log(`You lose! Player: ${playerCounter} Computer: ${computerCounter}`)
+  } else {
+    console.log(`It's a draw! Player: ${playerCounter} Computer: ${computerCounter}`)
+  }
 }
 
+game();
