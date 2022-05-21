@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  --main-color: rgb(70, 180, 84);
+  --bg-color: black;
+  --player-color: lightseagreen;
+  --computer-color: lightcoral;
+}
+
+body {
+  width: 90%;
+  min-width: fit-content;
+  margin: auto;
+  text-align: center;
+  background-color: var(--bg-color);
+  color: var(--main-color);
+}
+
+h1 {
+  border-bottom: 3px solid var(--main-color);
+}
+
+main {
+  font-size: 1.3em;
+}
+
+.logs {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.logs p {
+  min-height: 75px;
+}
+
+.hide {
+  visibility: hidden;
+}
