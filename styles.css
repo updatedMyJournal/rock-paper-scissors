@@ -22,6 +22,7 @@ body {
   text-align: center;
   background-color: var(--bg-color);
   color: var(--main-color);
+  font-family: 'Fira Code', monospace;
 }
 
 h1 {
@@ -142,4 +143,15 @@ main {
   border-color: var(--computer-color);
   box-shadow: 2px 2px 5px var(--computer-color);
   transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  .buttons-wrapper {
+    gap: .5em;
+  }
+
+  .buttons-wrapper img {
+    width: 75px;
+    height: 75px;
+  }
 }
