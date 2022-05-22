@@ -4,6 +4,7 @@ let playerButtonsWrapper = document.querySelector('.buttons-wrapper.player');
 let playerScoreElement = document.querySelector('.player-score');
 let computerButtonsWrapper = document.querySelector('.buttons-wrapper.computer');
 let computerScoreElement = document.querySelector('.computer-score');
+let currentAnimatedComputerButton;
 
 let playerSelection;
 let playerTimer;
@@ -11,22 +12,45 @@ let computerTimer;
 let playerScore = 0;
 let computerScore = 0;
 
-//TODO: add button animation
+// prevent mouse selection
+document.addEventListener('pointerdown', (e) => e.preventDefault());
 
-restartButton.onclick = () => reset();
+restartButton.onpointerdown = (e) => {
+  e.target.setPointerCapture(e.pointerId);
+  animate(e.target);
+};
 
-playerButtonsWrapper.onclick = (e) => {
-  let button = e.target;
+restartButton.onpointerup = (e) => {
+  removeAnimate(e.target);
+  reset();
+};
 
-  if (!button.closest('[data-name]')) return;
+playerButtonsWrapper.onpointerdown = (e) => {
+  let button = e.target.closest('[data-name]');
+
+  if (!button) return;
+
+  button.setPointerCapture(e.pointerId);
+  animate(button);
+};
+
+playerButtonsWrapper.onpointerup = (e) => {
+  let button = e.target.closest('[data-name]');
+
+  if (!button) return;
 
   if (isScoreTooHigh()) reset();
 
   logMessage.style.color = '';
   playerSelection = button.dataset.name;
+
+  removeAnimate(button);
   removeHightlight();
   highlightButton(button);
   playRound();
+
+  animate(currentAnimatedComputerButton);
+  setTimeout(() => removeAnimate(currentAnimatedComputerButton), 100);
 
   if (isScoreTooHigh()) {
     restartButton.classList.remove('hide');
@@ -81,13 +105,22 @@ function computerPlay() {
 
   switch(random) {
     case 1:
+      currentAnimatedComputerButton = rockButtonComputer;
       highlightButton(rockButtonComputer);
+      animate(rockButtonComputer);
+
       return 'Rock';
     case 2:
+      currentAnimatedComputerButton = paperButtonComputer;
       highlightButton(paperButtonComputer);
+      animate(paperButtonComputer);
+
       return 'Paper';
     case 3:
+      currentAnimatedComputerButton = scissorsButtonComputer;
       highlightButton(scissorsButtonComputer);
+      animate(scissorsButtonComputer);
+
       return 'Scissors';
   }
 }
@@ -132,4 +165,12 @@ function reset() {
   logMessage.textContent = '';
   restartButton.classList.add('hide');
   removeHightlight();
+}
+
+function animate(elem) {
+  elem.style.transform = 'translateY(10%)';
+}
+
+function removeAnimate(elem) {
+  elem.style.transform = '';
 }

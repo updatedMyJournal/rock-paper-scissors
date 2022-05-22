@@ -113,10 +113,12 @@ main {
   border: 2px solid var(--main-color);
   border-radius: 10px;
   padding: .5em 1em;
+  transition: all .3s;
 }
 
 .restart:hover {
   box-shadow: 2px 2px 5px var(--main-color);
+  cursor: pointer;
   transform: scale(1.2);
 }
 
@@ -142,12 +144,15 @@ main {
   border-color: var(--player-color);
   box-shadow: 2px 2px 5px var(--player-color);
   transform: scale(1.2);
+  transition: all .3s;
+  cursor: pointer;
 }
 
 .computer.computer-highlight {
   border-color: var(--computer-color);
   box-shadow: 2px 2px 5px var(--computer-color);
   transform: scale(1.2);
+  transition: all .3s;
 }
 
 @media (max-width: 768px) {
