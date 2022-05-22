@@ -1,59 +1,60 @@
-function computerPlay() {
-  let random = 1 + Math.floor(Math.random() * 3);
+let logMessage = document.querySelector('.logs').firstElementChild;
+let restartButton = document.querySelector('.restart');
+let playerButtonsWrapper = document.querySelector('.buttons-wrapper.player');
+let playerScoreElement = document.querySelector('.player-score');
+let computerButtonsWrapper = document.querySelector('.buttons-wrapper.computer');
+let computerScoreElement = document.querySelector('.computer-score');
 
-  switch(random) {
-    case 1:
-      return 'Rock';
-    case 2:
-      return 'Paper';
-    case 3:
-      return 'Scissors';
-    default:
-      throw new Error('Error in Math.random()');
+let playerSelection;
+let playerTimer;
+let computerTimer;
+let playerScore = 0;
+let computerScore = 0;
+
+//TODO: add button animation
+
+restartButton.onclick = () => reset();
+
+playerButtonsWrapper.onclick = (e) => {
+  let button = e.target;
+
+  if (!button.closest('[data-name]')) return;
+
+  if (isScoreTooHigh()) reset();
+
+  logMessage.style.color = '';
+  playerSelection = button.dataset.name;
+  removeHightlight();
+  highlightButton(button);
+  playRound();
+
+  if (isScoreTooHigh()) {
+    restartButton.classList.remove('hide');
+    logMessage.style.fontSize = '1.5em';
+
+    if (playerScore === computerScore) {
+      logMessage.textContent = 'It\'s a draw!';
+    } else if (playerScore > computerScore) {
+      logMessage.style.color = 'var(--player-color)';
+      logMessage.textContent = 'You win!';
+    } else {
+      logMessage.style.color = 'var(--computer-color)';
+      logMessage.textContent = 'You lose!';
+    }
   }
-}
-
-function playerPlay() {
-  let playerInput;
-
-  while (true) {
-    playerInput = prompt('Rock, Paper or Scissors?');
-
-    if (playerInput == null) break;
-
-    if (playerInput.match(/^(rock|paper|scissors)$/i)) break;
-  }
-  
-  return playerInput;
-}
+};
 
 function playRound() {
-  let playerSelection = playerPlay();
-  let computerLc = computerPlay().toLowerCase();
-
-  if (playerSelection == null) {
-    return (
-      { 
-        message: 'You cancelled your input.',
-        playerWonTheGame: false,
-        draw: true,
-      }
-    );
-  }
-
+  let computerSelection = computerPlay();
+  let winMessage = `You win! ${playerSelection} beats ${computerSelection}`;
+  let loseMessage = `You lose! ${computerSelection} beats ${playerSelection}`;
+  let drawMessage = `It's a draw! ${playerSelection} and ${computerSelection} are equal!`;
+  let computerLc = computerSelection.toLowerCase()
   let playerLc = playerSelection.toLowerCase();
-  let winMessage = `You win! ${playerLc[0].toUpperCase() + playerLc.slice(1)} beats ${computerLc[0].toUpperCase() + computerLc.slice(1)}`;
-  let loseMessage = `You lose! ${computerLc[0].toUpperCase() + computerLc.slice(1)} beats ${playerLc[0].toUpperCase() + playerLc.slice(1)}`;
-  let drawMessage = `It's a draw! ${playerLc[0].toUpperCase() + playerLc.slice(1)} and ${computerLc[0].toUpperCase() + computerLc.slice(1)} are equal!`;
 
   if (playerLc === computerLc) {
-    return (
-      { 
-        message: drawMessage,
-        playerWonTheGame: false,
-        draw: true,
-      }
-    );
+    logMessage.textContent = drawMessage;
+    return;
   }
   
   if (
@@ -61,37 +62,74 @@ function playRound() {
     || (playerLc === 'paper' && computerLc === 'rock')
     || (playerLc === 'scissors' && computerLc === 'paper')
   ) {
-    return { message: winMessage, playerWonTheGame: true, };
+    logMessage.textContent = winMessage;
+    playerScore += 1;
+    playerScoreElement.textContent = playerScore;
+    return;
   } 
 
-  return { message: loseMessage, playerWonTheGame: false, };
+  logMessage.textContent = loseMessage;
+  computerScore += 1;
+  computerScoreElement.textContent = computerScore;
 }
 
-function game() {
-  let playerCounter = 0;
-  let computerCounter = 0;
+function computerPlay() {
+  let rockButtonComputer = document.querySelector('.rock.computer');
+  let paperButtonComputer = document.querySelector('.paper.computer');
+  let scissorsButtonComputer = document.querySelector('.scissors.computer');
+  let random = 1 + Math.floor(Math.random() * 3);
 
-  for (let i = 0; i < 5; i++) {
-    let { message, playerWonTheGame, draw = false } = playRound();
-
-    if (!draw) {
-      if (playerWonTheGame) {
-        playerCounter++;
-      } else {
-        computerCounter++;
-      }
-    }
-
-    console.log(`${message} Player: ${playerCounter} Computer: ${computerCounter}`);
+  switch(random) {
+    case 1:
+      highlightButton(rockButtonComputer);
+      return 'Rock';
+    case 2:
+      highlightButton(paperButtonComputer);
+      return 'Paper';
+    case 3:
+      highlightButton(scissorsButtonComputer);
+      return 'Scissors';
   }
+}
 
-  if (playerCounter > computerCounter) {
-    console.log(`You win! Player: ${playerCounter} Computer: ${computerCounter}`)
-  } else if (computerCounter > playerCounter) {
-    console.log(`You lose! Player: ${playerCounter} Computer: ${computerCounter}`)
+function highlightButton(elem) {
+  let selection;
+
+  if (elem.classList.contains('player')) {
+    selection = 'player-highlight';
+    elem.classList.add(selection);
+    playerTimer = setTimeout(() => elem.classList.remove(selection), 2000);
   } else {
-    console.log(`It's a draw! Player: ${playerCounter} Computer: ${computerCounter}`)
+    selection = 'computer-highlight';
+    elem.classList.add(selection);
+    computerTimer = setTimeout(() => elem.classList.remove(selection), 2000);
   }
 }
 
-//game();
+function removeHightlight() {
+  clearTimeout(playerTimer);
+  clearTimeout(computerTimer);
+
+  let highlightedPlayerButton = playerButtonsWrapper.querySelector('.player.player-highlight');
+  let highlightedComputerButton = computerButtonsWrapper.querySelector('.computer.computer-highlight');
+
+  if (highlightedPlayerButton) highlightedPlayerButton.classList.remove('player-highlight');
+
+  if (highlightedComputerButton) highlightedComputerButton.classList.remove('computer-highlight');
+}
+
+function isScoreTooHigh() {
+  return (playerScore >= 5 || computerScore >= 5);
+}
+
+function reset() {
+  playerScore = 0;
+  computerScore = 0;
+  playerScoreElement.textContent = 0;
+  computerScoreElement.textContent = 0;
+  logMessage.style.fontSize = '';
+  logMessage.style.color = '';
+  logMessage.textContent = '';
+  restartButton.classList.add('hide');
+  removeHightlight();
+}

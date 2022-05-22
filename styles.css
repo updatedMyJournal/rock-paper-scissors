@@ -42,7 +42,11 @@ main {
 }
 
 .logs p {
-  min-height: 75px;
+  margin: 0;
+  height: 75px;
+
+  /* to vertically align text inside the element */
+  line-height: 75px;
 }
 
 .hide {
@@ -133,13 +137,14 @@ main {
   border-radius: 10px;
 }
 
-.buttons-wrapper img.player:hover {
+.buttons-wrapper img.player:hover,
+.player.player-highlight {
   border-color: var(--player-color);
   box-shadow: 2px 2px 5px var(--player-color);
   transform: scale(1.2);
 }
 
-.buttons-wrapper img.computer:hover {
+.computer.computer-highlight {
   border-color: var(--computer-color);
   box-shadow: 2px 2px 5px var(--computer-color);
   transform: scale(1.2);
