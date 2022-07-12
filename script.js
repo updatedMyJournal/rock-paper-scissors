@@ -4,13 +4,16 @@ let playerButtonsWrapper = document.querySelector('.buttons-wrapper.player');
 let playerScoreElement = document.querySelector('.player-score');
 let computerButtonsWrapper = document.querySelector('.buttons-wrapper.computer');
 let computerScoreElement = document.querySelector('.computer-score');
-let currentAnimatedComputerButton;
 
-let playerSelection;
-let playerTimer;
-let computerTimer;
 let playerScore = 0;
 let computerScore = 0;
+let playerSelection;
+let currentAnimatedComputerButton;
+
+let playerHighlightTimer;
+let computerHighlightTimer;
+let computerAnimateTimer;
+let textAnimateTimer;
 
 // prevent mouse selection
 document.addEventListener('pointerdown', (e) => e.preventDefault());
@@ -21,6 +24,8 @@ restartButton.onpointerdown = (e) => {
 };
 
 restartButton.onpointerup = (e) => {
+  if (e.target.className.includes('hide')) return;
+  
   removeAnimate(e.target);
   reset();
 };
@@ -41,30 +46,35 @@ playerButtonsWrapper.onpointerup = (e) => {
 
   if (isScoreTooHigh()) reset();
 
-  logMessage.style.color = '';
   playerSelection = button.dataset.name;
 
+  logMessage.style.opacity = '';
+  logMessage.innerHTML = '';
+
+  clearTimeout(textAnimateTimer);
   removeAnimate(button);
-  removeHightlight();
+  removeAnimate(currentAnimatedComputerButton);
+  removeAllHighlight();
   highlightButton(button);
   playRound();
-
-  animate(currentAnimatedComputerButton);
-  setTimeout(() => removeAnimate(currentAnimatedComputerButton), 100);
 
   if (isScoreTooHigh()) {
     restartButton.classList.remove('hide');
     logMessage.style.fontSize = '1.5em';
 
+    let finalMessage;
+
     if (playerScore === computerScore) {
-      logMessage.textContent = 'It\'s a draw!';
+      finalMessage = 'It\'s a draw!';
     } else if (playerScore > computerScore) {
       logMessage.style.color = 'var(--player-color)';
-      logMessage.textContent = 'You win!';
+      finalMessage = 'You win!';
     } else {
       logMessage.style.color = 'var(--computer-color)';
-      logMessage.textContent = 'You lose!';
+      finalMessage = 'You lose!';
     }
+
+    appendAndAnimateLogText(finalMessage);
   }
 };
 
@@ -77,7 +87,7 @@ function playRound() {
   let playerLc = playerSelection.toLowerCase();
 
   if (playerLc === computerLc) {
-    logMessage.textContent = drawMessage;
+    appendAndAnimateLogText(drawMessage);
     return;
   }
   
@@ -86,15 +96,19 @@ function playRound() {
     || (playerLc === 'paper' && computerLc === 'rock')
     || (playerLc === 'scissors' && computerLc === 'paper')
   ) {
-    logMessage.textContent = winMessage;
+
     playerScore += 1;
     playerScoreElement.textContent = playerScore;
+
+    if (!isScoreTooHigh()) appendAndAnimateLogText(winMessage);
+
     return;
   } 
 
-  logMessage.textContent = loseMessage;
   computerScore += 1;
   computerScoreElement.textContent = computerScore;
+
+  if (!isScoreTooHigh()) appendAndAnimateLogText(loseMessage);
 }
 
 function computerPlay() {
@@ -131,17 +145,17 @@ function highlightButton(elem) {
   if (elem.classList.contains('player')) {
     selection = 'player-highlight';
     elem.classList.add(selection);
-    playerTimer = setTimeout(() => elem.classList.remove(selection), 2000);
+    playerHighlightTimer = setTimeout(() => elem.classList.remove(selection), 2000);
   } else {
     selection = 'computer-highlight';
     elem.classList.add(selection);
-    computerTimer = setTimeout(() => elem.classList.remove(selection), 2000);
+    computerHighlightTimer = setTimeout(() => elem.classList.remove(selection), 2000);
   }
 }
 
-function removeHightlight() {
-  clearTimeout(playerTimer);
-  clearTimeout(computerTimer);
+function removeAllHighlight() {
+  clearTimeout(playerHighlightTimer);
+  clearTimeout(computerHighlightTimer);
 
   let highlightedPlayerButton = playerButtonsWrapper.querySelector('.player.player-highlight');
   let highlightedComputerButton = computerButtonsWrapper.querySelector('.computer.computer-highlight');
@@ -160,17 +174,66 @@ function reset() {
   computerScore = 0;
   playerScoreElement.textContent = 0;
   computerScoreElement.textContent = 0;
+
   logMessage.style.fontSize = '';
   logMessage.style.color = '';
-  logMessage.textContent = '';
+  logMessage.style.opacity = '0';
+  logMessage.innerHTML = '';
+
   restartButton.classList.add('hide');
-  removeHightlight();
+  removeAllHighlight();
+  clearTimeout(textAnimateTimer);
 }
 
 function animate(elem) {
-  elem.style.transform = 'translateY(10%)';
+  elem.classList.add('animate');
+
+  if (elem.className.includes('computer')) setTimeout(() => removeAnimate(elem), 100);
 }
 
 function removeAnimate(elem) {
-  elem.style.transform = '';
+  if (!elem) return;
+
+  clearTimeout(computerAnimateTimer);
+  elem.classList.remove('animate');
+}
+
+// put each char into a span to treat them separately
+function appendAndAnimateLogText(str) {
+  logMessage.innerHTML = '';
+
+  textAnimateTimer = setTimeout(() => {
+    let docFragment = new DocumentFragment();
+    let arr = str.split('');
+    
+    for (let char of arr) {
+      let span = document.createElement('span');
+      
+      span.innerHTML = char;
+      docFragment.append(span);
+    }
+
+    logMessage.append(docFragment);
+    animateLogText();
+  }, 50);
+}
+
+let i = 0;
+
+/*
+  each letter gets opacity set to 1 every 15ms
+  this creates an effect of each word gradually apprearing
+*/
+function animateLogText() {
+  if (i >= logMessage.children.length) {
+    i = 0;
+
+    return;
+  };
+
+  let span = logMessage.children[i];
+
+  span.className = 'show';
+  i++;
+  setTimeout(() => animateLogText(), 15);
 }

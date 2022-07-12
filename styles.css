@@ -17,12 +17,13 @@ html {
 
 body {
   width: 90%;
-  min-width: fit-content;
+  min-width: 320px;
   margin: auto;
   text-align: center;
   background-color: var(--bg-color);
   color: var(--main-color);
   font-family: 'Fira Code', monospace;
+  cursor: default;
 }
 
 h1 {
@@ -42,14 +43,24 @@ main {
 }
 
 .logs p {
-  margin: 0;
   height: 75px;
+  padding: 15px 10px;
+  margin: 15px 0;
+  opacity: 1;
+  transition: opacity 1s;
+}
 
-  /* to vertically align text inside the element */
-  line-height: 75px;
+.logs p > span {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.logs p > span.show {
+  opacity: 1;
 }
 
 .hide {
+  opacity: 0;
   visibility: hidden;
 }
 
@@ -75,7 +86,7 @@ main {
 .score-wrapper,
 .buttons-wrapper {
   min-height: 20vh;
-  padding: 10px;
+  padding: 10px 30px;
 }
 
 /* score */
@@ -113,7 +124,7 @@ main {
   border: 2px solid var(--main-color);
   border-radius: 10px;
   padding: .5em 1em;
-  transition: all .3s;
+  transition: transform .3s, opacity 1s, visibility 1s;
 }
 
 .restart:hover {
@@ -127,7 +138,7 @@ main {
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  gap: 30px;
 }
 
 .buttons-wrapper img {
@@ -139,29 +150,73 @@ main {
   border-radius: 10px;
 }
 
-.buttons-wrapper img.player:hover,
-.player.player-highlight {
+.buttons-wrapper.player img.animate,
+.buttons-wrapper.computer img.animate,
+.restart.animate  {
+  transform: translateY(10%);
+}
+
+img.player {
+  transform: scale(1);
+  cursor: pointer;
+  transition: all .3s;
+}
+
+img.player:hover,
+img.player-highlight {
   border-color: var(--player-color);
   box-shadow: 2px 2px 5px var(--player-color);
   transform: scale(1.2);
-  transition: all .3s;
-  cursor: pointer;
 }
 
-.computer.computer-highlight {
+img.computer {
+  transform: scale(1);
+  transition: all .3s;
+}
+
+img.computer-highlight {
   border-color: var(--computer-color);
   box-shadow: 2px 2px 5px var(--computer-color);
   transform: scale(1.2);
-  transition: all .3s;
 }
 
 @media (max-width: 768px) {
+  .score-wrapper {
+    font-size: 1.2em;
+    padding: 5px 20px;
+    min-height: 10vh;
+  }
+
   .buttons-wrapper {
-    gap: .5em;
+    gap: 20px;
+    padding: 5px 20px;
   }
 
   .buttons-wrapper img {
     width: 75px;
     height: 75px;
+  }
+}
+
+@media (max-width: 425px) {
+  body {
+    width: 100%;
+  }
+
+  .score-and-buttons-wrapper {
+    min-width: initial;
+  }
+
+  .score-wrapper {
+    display: block;
+    padding: 0;
+    margin-bottom: 15px;
+    min-height: auto;
+  }
+
+  .buttons-wrapper {
+    flex-flow: column nowrap;
+    padding: 0;
+    min-height: auto;
   }
 }
