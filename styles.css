@@ -28,6 +28,7 @@ body {
 
 h1 {
   border-bottom: 3px solid var(--main-color);
+  margin-bottom: 0;
 }
 
 main {
@@ -203,6 +204,12 @@ img.computer-highlight {
     width: 100%;
   }
 
+  .logs p {
+    height: 40px;
+    padding: 0;
+    margin: 0 0 10px 0;
+  }
+
   .score-and-buttons-wrapper {
     min-width: initial;
   }
@@ -214,9 +221,14 @@ img.computer-highlight {
     min-height: auto;
   }
 
+  .score-wrapper p {
+    margin: 10px 0;
+  }
+
   .buttons-wrapper {
     flex-flow: column nowrap;
     padding: 0;
+    padding-bottom: 25px;
     min-height: auto;
   }
 }

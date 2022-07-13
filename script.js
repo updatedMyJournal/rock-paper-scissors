@@ -15,6 +15,16 @@ let computerHighlightTimer;
 let computerAnimateTimer;
 let textAnimateTimer;
 
+/*
+ * a "hack" to fix behaviour on touch devices
+ * otherwise pointer events woudn't properly work
+ */
+document.querySelector('main').addEventListener('touchstart', (e) => {
+  if (!e.target.closest('[data-name], .restart')) return;
+
+  e.preventDefault();
+}, {capture: true, passive: false});
+
 // prevent mouse selection
 document.addEventListener('pointerdown', (e) => e.preventDefault());
 
@@ -221,9 +231,9 @@ function appendAndAnimateLogText(str) {
 let i = 0;
 
 /*
-  each letter gets opacity set to 1 every 15ms
-  this creates an effect of each word gradually apprearing
-*/
+ * each letter gets opacity set to 1 every 15ms
+ * this creates an effect of each word gradually apprearing
+ */
 function animateLogText() {
   if (i >= logMessage.children.length) {
     i = 0;
